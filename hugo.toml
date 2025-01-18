@@ -1,0 +1,13 @@
+baseURL = 'https://ameliayeah.github.io'
+languageCode = 'en-us'
+title = 'Melancholia'
+theme = "hugo-theme-m10c"
+
+[params]
+    author = "AmeliaYeah"
+    description = "[Object object]"
+
+[[params.social]]
+    icon = "brand-github"
+    name = "Github"
+    url = "https://github.com/AmeliaYeah"
