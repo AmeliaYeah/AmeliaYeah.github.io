@@ -1,7 +1,7 @@
 ---
 title: "Exit Functions in LibC"
 date: "2025-04-07T13:53:34-04:00"
-tags: ["Binary Exploitation"]
+tags: ["binex"]
 author: "AmeliaYeah"
 draft: false
 table-of-contents: true
