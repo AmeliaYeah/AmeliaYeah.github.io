@@ -2,6 +2,19 @@
 {{ $themeName := .Site.Params.theme }}
 {{ $theme := index (where .Site.Data.themes "name" $themeName) 0 }}
 
+code {
+    background-color: rgba(0,0,0,0.5);
+    color: white;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+div.highlight code {
+    background-color: rgba(0,0,0,0);
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
 :root {
     --site-bg: url("{{ index $theme "site-bg" }}");
     --accent-color: {{ index $theme "accent-color" }};

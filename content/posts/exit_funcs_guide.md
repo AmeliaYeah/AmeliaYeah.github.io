@@ -98,7 +98,7 @@ You run it, it gives you a LibC leak, and lets you write to any address you choo
 
 Running it in GDB, we can go ahead and print out the actual exit function list. We get the following output (since, by default, there's only 1 exit function that actually gets handled (`_dl_fini`))
 
-```
+```as
 pwndbg> x/8xg __exit_funcs
 0x7ffff7f98fc0 <initial>:       0x0000000000000000      0x0000000000000001
 0x7ffff7f98fd0 <initial+16>:    0x0000000000000004      0xab808ec58cc15c1d
