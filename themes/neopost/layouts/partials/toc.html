@@ -141,6 +141,11 @@ Start with these basic CSS rules to style the table of contents:
 {{- if (index .Params "table-of-contents") }}
   {{- with $headings }}
     {{- if ge (len .) $minNumHeadings }}
+  <div>
+  <h1 class="toc-heading-info toc-item">Table of Contents</h1>
+  <h4 class="toc-heading-info"><a href="/" class="toc-item">Back to Main Page</a></h4>
+  </div>
+
   <nav class="toc">
   <ul>
     {{- $counter := dict "h2" 0 "h3" 0 "h4" 0 "h5" 0 "h6" 0 }}
@@ -162,9 +167,15 @@ Start with these basic CSS rules to style the table of contents:
           {{ $isset := (isset $page.Params "toc-auto-numbering") }}
           {{ $local := (index $page.Params "toc-auto-numbering") }}
           {{ $global := (index $.Site.Params "toc-auto-numbering") }}
+
+          <span style="font-weight: bold; color: gray">
           {{ if (or (and $isset $local) (and $global (not $isset)) ) }}
+          {{strings.Repeat (sub ($num|len) 1) (htmlUnescape "&emsp;")}}
           {{- range $num }}{{- if ne . 0 }}{{- . }}.{{- end }}{{- end }}
-          {{ end }} {{ .text }}
+          {{ end }}
+          </span>
+
+          {{ .text }}
         </a>
       </li>
     {{- end }}
