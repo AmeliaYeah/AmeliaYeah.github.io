@@ -24,11 +24,26 @@
         {{ end }}
         </div>
         
-        <div class="small-box">
-            {{ with .Site.GetPage "section" "/sidebar/basic-info.md" }}
+        <div class="small-box" id="about_me_list">
+            {{ with .Site.GetPage "section" "/sidebar/basic_info.md" }}
                 {{ .Content | safeHTML }}
             {{ end }}
-            </ul>
+
+            <script type="text/javascript">
+                //add the age
+                var list = document.getElementById("about_me_list").getElementsByTagName("ul")[0];
+
+                //locate the age
+                var els = list.getElementsByTagName("li");
+                for(var i = 0; i < els.length; i++) {
+                    var el = els[i];
+                    if(el.innerText.startsWith("born in")) {
+                        var year = parseInt(el.innerText.substring(7));
+                        const age = new Date(Date.now()).getFullYear() - year;
+                        el.innerText = `${age} years old`;
+                    }
+                }
+            </script>
         </div>
         
         <nav class="links">
@@ -56,19 +71,19 @@
             </div>
             </section>
             <section>
-            <link href="/pagefind/pagefind-ui.css" rel="stylesheet">
-            <script src="/pagefind/pagefind-ui.js"></script>
-            <div id="search"></div>
-            <script>
-            window.addEventListener('DOMContentLoaded', (event) => {
-                new PagefindUI(
-                    {
-                        element: "#search",
-                        showSubResults: true
-                    }
-                );
-            });
-            </script>
+                <link href="/pagefind/pagefind-ui.css" rel="stylesheet">
+                <script src="/pagefind/pagefind-ui.js"></script>
+                <div id="search"></div>
+                <script>
+                window.addEventListener('DOMContentLoaded', (event) => {
+                    new PagefindUI(
+                        {
+                            element: "#search",
+                            showSubResults: true
+                        }
+                    );
+                });
+                </script>
             </section>
             {{ end }}
         </article>
@@ -119,6 +134,17 @@
         </article>
     {{ end }}
     {{ template "_internal/pagination.html" . }}
+
+    <article id="bottom" class="clearfix">
+        <section>
+                <h5 style="margin: 0px;">Credit where credit's due..</h5>
+                <span style="font-size: 0.7rem;">
+                    {{ with .Site.GetPage "section" "/welcome-header/credit.md"}}
+                        {{.Content | safeHTML}}
+                    {{end}}
+                </span>
+            </section>
+    </article>
     <script>
     window.addEventListener('click', e => {
         let dropboxs = document.getElementsByClassName("dropbox-content");

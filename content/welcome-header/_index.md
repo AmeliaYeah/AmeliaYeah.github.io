@@ -1,10 +1,6 @@
 ---
 headless: true
-title: "Hello fren! ^-^"
+title: "WELCOME~!!!"
 intro: 
-  - "Welcome to my personal website! I tend to ramble with random shit here, so I hope you enjoyed it, even if you came across one of the articles/posts I made."
-list:
-  name: "Credits"
-  items:
-    - "'neopost' theme for Hugo by @salatine on GH"
+  - "Welcome to my security blog and personal website! Here, you'll find me rambling about a bunch of shit. Hopefully it's interesting :D"
 ---

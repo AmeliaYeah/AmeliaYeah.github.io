@@ -1,7 +1,7 @@
 ---
 title: "Exit Functions in LibC"
 date: "2025-04-07T13:53:34-04:00"
-tags: ["binex"]
+tags: ["binex", "concepts"]
 author: "AmeliaYeah"
 draft: false
 table-of-contents: true
@@ -204,9 +204,11 @@ pwndbg> x/xg &_rtld_global
 True
 ```
 
-Bingo. We found an address that belongs to `ld.so`. This `_rtld_global` area shown is within `ld.so` already, but LibC has another `_rtld_global` area that merely points to this one.
+In short, `_rtld_global` itself doesn't matter; what does matter is that this is a link between LibC and `ld.so`. The actual `_rtld_global` struct itself is created and stored in the `ld.so` address space, while LibC's `_rtld_global` is essentially a pointer to this very struct.
 
-For the sake of this demonstration, I didn't know this until I wrote the script for it, so I'm going to be using the value *inside* the array (0x7ffff7ffe2e0) instead of the actual `_rtld_global` address (0x7ffff7ffd000). It doesn't matter which of these you use though.
+This means we can essentially read out the value from LibC's `_rtld_global` to get an address in the `ld.so` address space, and thus, be able to get the `ld.so` base address.
+
+In my exploit and demonstration from hereon out, I did not properly understand this struct, so I'll be using the first address *inside* the `_rtld_global` (in `ld.so`) struct (0x7ffff7ffe2e0). However, using the actual `_rtld_global` address itself (0x7ffff7ffd000) is also fine, as it also belongs in the `ld.so` memory space.
 
 Now, we can go ahead and do the following:
 1. Calculate the (consistent) offset between the leaked address and the current `ld.so` base address from GDB:
