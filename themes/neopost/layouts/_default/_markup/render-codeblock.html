@@ -1,0 +1,18 @@
+{{- $lang  := .Attributes.lang | default .Type -}}
+{{- $opts := "lineNos=false" -}}
+
+<div class="highlight-wrapper">
+  {{if isset .Attributes "script_name"}}
+      {{- $opts = .Options -}}
+
+      <div class="highlight-toolbar">
+      <span class="item">
+        <span class="label">
+          Shown: <span class="bold">{{ .Attributes.script_name }}</span> ({{ $lang }})
+        </span>
+      </span>
+    </div>
+  {{end}}
+
+  {{- highlight .Inner $lang $opts -}}
+</div>

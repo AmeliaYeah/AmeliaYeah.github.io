@@ -46,7 +46,7 @@ But, enough with the theoretical side of things; let's get to the practicalities
 
 Sparing the extra details of heap exploitation and whatnot, let's make a simple program with all protections enabled.
 
-```c
+```c {script_name="example.c"}
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -120,7 +120,7 @@ That's because of one thing I didn't mention yet: Pointer Mangling! (You thought
 
 Look at `exit.c` again and how it handles function addresses. More specifically, this line for handling `ef_cxa` (though it's present in all other flavors that use addresses):
 
-```c
+```c {script_name="exit.c"}
 f->flavor = ef_free;
 cxafct = f->func.cxa.fn;
 arg = f->func.cxa.arg;
@@ -129,13 +129,13 @@ PTR_DEMANGLE (cxafct);
 
 We see it's calling `PTR_DEMANGLE` on the actual function address. Since this binary is running on `x86_64` linux, we can view the [pointer_guard.h](https://elixir.bootlin.com/glibc/glibc-2.41/source/sysdeps/unix/sysv/linux/x86_64/pointer_guard.h#L31) file that defines this macro, and see the following:
 
-```c
-#  define PTR_MANGLE(reg)\
-	xor __pointer_chk_guard_local(%rip), reg;\
-    rol $2*LP_SIZE+1, reg
-#  define PTR_DEMANGLE(reg)\
-    ror $2*LP_SIZE+1, reg;\
-    xor __pointer_chk_guard_local(%rip), reg
+```c {script_name="pointer_guard.h"}
+#define PTR_MANGLE(reg)
+		xor __pointer_chk_guard_local(%rip), reg
+		rol $2*LP_SIZE+1, reg
+#define PTR_DEMANGLE(reg)
+		ror $2*LP_SIZE+1, reg;
+		xor __pointer_chk_guard_local(%rip), reg
 ```
 
 And knowing it's 64 bit, we can look at [x86lp_size.h](https://elixir.bootlin.com/glibc/glibc-2.41/source/sysdeps/x86_64/x86-lp_size.h#L22) to identify the `LP_SIZE` parameter: `8`.
@@ -229,7 +229,7 @@ Remember that, in our case, using flavor `ef_cxa` is best given the format `func
 
 Since we have access to the heap, our goal is to allocate an entire `exit_function_list` struct and replace the value of `__exit_funcs` to that instead. Let's understand what we actually need to create.
 
-```c
+```c {script_name="exit.h"}
 enum
 {
   ef_free,	/* `ef_free' MUST be zero!  */
@@ -287,7 +287,7 @@ The hashes of the libraries I used are:
 
 ### The Script
 
-```python
+```python {script_name="solve.py"}
 from pwn import *
 
 context.log_level = "info"

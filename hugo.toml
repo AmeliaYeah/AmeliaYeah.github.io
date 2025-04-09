@@ -10,3 +10,8 @@ titleCaseStyle = "none"
 
 [permalinks]
     posts = "/posts/:year/:month/:day/:title"
+
+[markup]
+    [markup.highlight]
+        lineNos = true
+        style = "github-dark"

@@ -2,6 +2,40 @@
 {{ $themeName := .Site.Params.theme }}
 {{ $theme := index (where .Site.Data.themes "name" $themeName) 0 }}
 
+p {
+    margin: 5px;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.highlight-wrapper {
+    padding: 5px;
+    margin: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+
+    background-color: rgba(0,0,0,0.2);
+}
+
+.highlight-toolbar {
+    background-color: rgba(0,0,0,0.5);
+    border-style: solid;
+    border-color: black;
+    margin-bottom: 5px;
+    padding: 1px;
+}
+
+.highlight-wrapper pre {
+    margin: 0;
+}
+
+div.highlight {
+    border-style: solid;
+    border-color: black;
+}
+
 code {
     background-color: rgba(0,0,0,0.5);
     color: white;
