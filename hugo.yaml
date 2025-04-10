@@ -1,0 +1,18 @@
+baseURL: 'https://ameliayeah.github.io'
+languageCode: 'en-us'
+title: 'The Mel-ternet'
+theme: "neopost"
+titleCaseStyle: "none"
+enableRobotsTXT: true
+
+params:
+    theme: "dark-blue"
+    author: "AmeliaYeah"
+
+permalinks:
+    posts: "/posts/:year/:month/:day/:title"
+
+markup:
+    highlight:
+        lineNos: true
+        style: "github-dark"

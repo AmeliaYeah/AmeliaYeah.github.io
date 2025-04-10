@@ -38,9 +38,16 @@
                 for(var i = 0; i < els.length; i++) {
                     var el = els[i];
                     if(el.innerText.startsWith("born in")) {
-                        var year = parseInt(el.innerText.substring(7));
-                        const age = new Date(Date.now()).getFullYear() - year;
-                        el.innerText = `${age} years old`;
+                        //construct date
+                        var data = el.innerText.substring(7).split(" ");
+                        var year = parseInt(data[2]);
+                        var month = parseInt(data[1]);
+                        var born = new Date(year, month-1, 1);
+
+                        //do math and display
+                        var difference = new Date(Date.now()) - born;
+                        var age = new Date(difference).getFullYear()-1970;
+                        el.innerText = `${age} years old`
                     }
                 }
             </script>
@@ -106,7 +113,6 @@
             <div class="post-header">
                 @{{ $page.Params.author }} <span class="timestamp">{{ $page.Date.Format "January 2, 2006" }}</span>
             </div>
-            <p>{{ .Summary }}</p>
             {{ with index $page.Params "title-images" }}
             <div class="photosetx2">
                 {{ range first 2 . }}
@@ -114,16 +120,6 @@
                 {{ end }}
             </div>
             {{ end }}
-            <div class="post-content readmore">
-                <!-- subtracting one because of how truncate works -->
-                {{ if gt (sub (len (( $page.ContentWithoutSummary | safeHTML) | plainify)) 1) $limit }}
-                <div id="text-content">{{ ( .ContentWithoutSummary | safeHTML) | truncate $limit }}</div>
-                <div id="full-content" style="display: none;">{{ $page.ContentWithoutSummary | safeHTML }}</div>
-                <summary id="read-more-btn" onclick="toggleReadMore()" style="display: inline;">{{ (index .Site.Params "read-more").text.more }}</summary>
-                {{ else }} 
-                <div id="full-content">{{ $page.ContentWithoutSummary | safeHTML }}</div>
-                {{ end }}
-            </div>
             {{ with index $page.Params "ending-images" }}
             <div class="photosetx3">
                 {{ range first 3 . }}

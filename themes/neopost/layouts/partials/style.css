@@ -2,10 +2,6 @@
 {{ $themeName := .Site.Params.theme }}
 {{ $theme := index (where .Site.Data.themes "name" $themeName) 0 }}
 
-p {
-    margin: 5px;
-}
-
 .bold {
     font-weight: bold;
 }
@@ -76,6 +72,7 @@ div.highlight code {
     --pagefind-ui-text: #ffffff;
     --pagefind-ui-font: Verdana, Geneva, Tahoma, sans-serif;
     --pagefind-ui-background: #12355c;
+    --pagefind-ui-border: #000000;
 }
 
 @-moz-document url-prefix() {
