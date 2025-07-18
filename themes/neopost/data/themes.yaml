@@ -90,7 +90,7 @@
 
 - name: "dark-pink"
   site-bg: "/black-flowertile.png"
-  accent-color: "#d63384"           # Bold magenta-pink
+  accent-color: "#ab1d64"           # Bold magenta-pink
   select-color: "#8a2c61"           # Dark fuchsia selection
   link-color: "#e052a0"             # Vivid pink for links
   bg-color: "#1a1a1a"               # Dark background

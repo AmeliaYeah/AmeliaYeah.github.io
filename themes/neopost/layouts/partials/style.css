@@ -64,6 +64,7 @@ code {
     border: none;
     font-family: "Patrick Hand", cursive;
     font-size: 1em;
+    height: fit-content;
 }
 
 .copy_script_bttn:hover {
@@ -240,6 +241,10 @@ nav.links > ul {
     justify-content: space-evenly;
 }
 
+li {
+    font-size: 16px;
+}
+
 nav.links li {
     text-align: center;
     list-style-image: none;
@@ -253,7 +258,6 @@ nav.links li > a {
     padding: .5em 3em;
 }
 
-nav.links li > a:visited {color: var(--link-color);}
 nav.links li > a:hover {
     color: var(--accent-color);
     background-color: var(--select-color);
@@ -277,10 +281,6 @@ a {
     color: var(--link-color);
     border-radius: .3em;
     transition: .2s ease-out;
-}
-
-a:visited {
-    color: var(--text-color);
 }
 
 a:hover {
@@ -378,10 +378,6 @@ article img {
 
 header h1 a {
     color: var(--special-text-color);
-}
-
-header h1 a:visited {
-    color: inherit;
 }
 
 header h1 a:hover {
