@@ -6,7 +6,7 @@ titleCaseStyle: "none"
 enableRobotsTXT: true
 
 params:
-    theme: "dark-blue"
+    theme: "dark-pink"
     author: "AmeliaYeah"
 
 permalinks:

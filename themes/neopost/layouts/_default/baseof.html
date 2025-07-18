@@ -15,6 +15,7 @@
     {{ end }}
     
     {{ partial "style.css" . }}
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="index, follow">
     <meta charset="utf-8">
@@ -25,5 +26,8 @@
     {{ block "main" . }}{{ end }}
     {{ if .Param "nextprev" }}{{ partial "nextprev.html" . }}{{ end }}
 </main>
+
+<script src="/code.js">
+</script>
 </body>
 </html>

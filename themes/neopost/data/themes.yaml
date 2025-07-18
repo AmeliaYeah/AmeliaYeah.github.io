@@ -88,6 +88,25 @@
     image: "/flower.png"
     # type: "+ "
 
+- name: "dark-pink"
+  site-bg: "/black-flowertile.png"
+  accent-color: "#d63384"           # Bold magenta-pink
+  select-color: "#8a2c61"           # Dark fuchsia selection
+  link-color: "#e052a0"             # Vivid pink for links
+  bg-color: "#1a1a1a"               # Dark background
+  text-color: "#f0cfe0"             # Soft light-pink text
+  bg2-color: "#2a2a2a"              # Slightly lighter dark
+  border-color: "#a34d84"           # Muted magenta border
+  post-shadow-color: "#d6338480"    # Semi-transparent shadow
+  special-text-color: "#ff66b2"     # Bright highlight pink
+  post-header-color: "#ffd6e8"      # Pale pink for headers
+  post-outline-color: "#b84891"     # Deep pink outline
+  post-outline-color2: "#3a3a3a"    # Dark neutral secondary outline
+  list-style:
+    image: "/flower.png"
+    # type: "+ "
+
+
 - name: "light-purple"
   site-bg: "/black-flowertile.png"
   accent-color: "#9b59b6"

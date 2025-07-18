@@ -1,6 +1,17 @@
 <style>
+
 {{ $themeName := .Site.Params.theme }}
 {{ $theme := index (where .Site.Data.themes "name" $themeName) 0 }}
+
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+a,li,p,h1,h2,h3,h4,h5,h6 {
+    font-family: "Patrick Hand", cursive;
+}
 
 .bold {
     font-weight: bold;
@@ -20,7 +31,7 @@
     border-style: solid;
     border-color: black;
     margin-bottom: 5px;
-    padding: 1px;
+    padding: 3px;
 }
 
 .highlight-wrapper pre {
@@ -32,18 +43,31 @@ div.highlight {
     border-color: black;
 }
 
-code {
-    background-color: rgba(0,0,0,0.5);
-    color: rgba(255,90,90);
-    padding-left: 2px;
-    padding-right: 2px;
-}
-
 div.highlight code {
     background-color: rgba(0,0,0,0);
     padding-left: 0px;
     padding-right: 0px;
     color: white;
+}
+
+code {
+    background-color: rgba(0,0,0,0.5);
+    color: rgba(255,128,255);
+    padding: 2px;
+    font-family: monospace;
+}
+
+
+.copy_script_bttn {
+    background-color: rgb(128,90,128);
+    float: right;
+    border: none;
+    font-family: "Patrick Hand", cursive;
+    font-size: 1em;
+}
+
+.copy_script_bttn:hover {
+    background-color: rgb(255,128,255);
 }
 
 :root {
@@ -64,16 +88,11 @@ div.highlight code {
     --list-style-image: url("{{ (index $theme "list-style").image }}");
 }
 
-* {
-    box-sizing: border-box;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-}
-
 #search {
-    --pagefind-ui-text: #ffffff;
-    --pagefind-ui-font: Verdana, Geneva, Tahoma, sans-serif;
-    --pagefind-ui-background: #12355c;
-    --pagefind-ui-border: #000000;
+    --pagefind-ui-font: "Patrick Hand", cursive;
+    --pagefind-ui-text: {{ index $theme "text-color" }};
+    --pagefind-ui-background: {{ index $theme "bg-color" }};
+    --pagefind-ui-border: {{ index $theme "post-outline-color" }};
 }
 
 @-moz-document url-prefix() {
@@ -108,16 +127,36 @@ body {
     background-color: var(--bg-color);
     background-image: var(--site-bg);
     margin: 0;
-    font-size: 14px;
     color: var(--text-color);
 }
 
-p {line-height: 1.5em;}
+h1,h2,h3,h4,h5,h6 {
+    margin: 0;
+}
+
+p {
+    margin: 0.1;
+    font-size: 1.2em;
+}
+
+a {
+    text-decoration: none;
+}
 
 h1 {
-    font-size: 1.5em;
+    font-size: 32px;
     color: var(--post-header-color);
     filter: drop-shadow(2px 0 0 var(--outline-color)) drop-shadow(0 2px 0 var(--outline-color)) drop-shadow(-2px 0 0 var(--outline-color)) drop-shadow(0 -2px 0 var(--outline-color))drop-shadow(0 1px 1px var(--outline-color2)) drop-shadow(1px 0 1px var(--outline-color2));
+}
+
+h2 {
+    font-size: 32px;
+    text-decoration: wavy underline;
+    text-underline-offset: 8px;
+}
+
+h3 {
+    font-size: 24px;
 }
 
 h4,
@@ -159,7 +198,6 @@ li.page-item {
 
 li.page-item a{
     display: inline-flex;
-    font-size: 1rem;
     margin: .2rem;
     background-color: var(--bg-color2);
     color: var(--text-color);
@@ -169,17 +207,12 @@ li.page-item a{
     margin-bottom: 1em;
     box-shadow: var(--post-shadow-color) 5px 5px;
 
-    text-decoration: none;
     user-select: none;
 }
 
 li.page-item.active a{
     color: var(--accent-color);
     border-color: var(--accent-color);
-}
-
-li.page-item.disabled a{
-    cursor: not-allowed;
 }
 
 li.page-item:not(.disabled):not(.active) a:hover{
@@ -218,7 +251,6 @@ nav.links li > a {
     background-color: var(--bg-color);
     border: 4px double var(--outline-color);
     padding: .5em 3em;
-    text-decoration: none;
 }
 
 nav.links li > a:visited {color: var(--link-color);}
@@ -271,7 +303,6 @@ a:hover {
     max-width: 240px;
     margin: auto;
     border: 2px solid var(--bg-color);
-    font-size: 11px;
     line-height: 1.5rem;
 }
 
@@ -300,7 +331,6 @@ a:hover {
     background: var(--bg-color);
     border: 4px double var(--bg-color2);
     border-radius: 2em;
-    font-size: small;
 }
 
 #bio p { margin: 1em; }
@@ -344,12 +374,9 @@ article img {
     font-weight: bold;
     color: var(--special-text-color);
     list-style: none;
-    cursor: pointer;
 }
 
 header h1 a {
-    cursor: pointer;
-    text-decoration: none;
     color: var(--special-text-color);
 }
 
@@ -388,13 +415,8 @@ header h1 a:hover {
 
 .timestamp {
     font-weight: normal;
-    font-size: smaller;
     margin: .2em;
     float: right;
-}
-
-.tag-item p {
-    font-size: smaller;
 }
 
 .photosetx2,
@@ -431,7 +453,6 @@ header h1 a:hover {
 }
 
 .small-text {
-    font-size: 11px;
     text-shadow: var(--bg-color) 1px 1px;
 }
 
@@ -442,7 +463,6 @@ header h1 a:hover {
     /* border: 4px double var(--outline-color); */
     border: 1px solid var(--outline-color);
     /* padding: .5em 3em; */
-    text-decoration: none;
 }
 
 .dropbox-content[visible] {
@@ -466,10 +486,6 @@ header h1 a:hover {
 .toc-heading-info {
     text-align: center;
     margin: 10px;
-}
-
-.toc-item {
-    text-decoration: none;
 }
 
 .table-of-contents.sidebar {
@@ -564,4 +580,5 @@ header h1 a:hover {
         display: inline;
     }
 }
+
 </style>

