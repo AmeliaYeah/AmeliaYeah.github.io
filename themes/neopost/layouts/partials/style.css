@@ -37,6 +37,10 @@ a,li,p,h1,h2,h3,h4,h5,h6 {
     justify-content: space-between;
 }
 
+.highlight-toolbar > .item {
+    padding-top: 0.5em;
+}
+
 .copy_script_bttn {
     background-color: rgb(128,90,128);
     border: none;
