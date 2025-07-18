@@ -32,6 +32,21 @@ a,li,p,h1,h2,h3,h4,h5,h6 {
     border-color: black;
     margin-bottom: 5px;
     padding: 3px;
+
+    display: flex;
+    justify-content: space-between;
+}
+
+.copy_script_bttn {
+    background-color: rgb(128,90,128);
+    border: none;
+    font-family: "Patrick Hand", cursive;
+    font-size: 1em;
+    padding: 0.3em 0.6em;
+}
+
+.copy_script_bttn:hover {
+    background-color: rgb(255,128,255);
 }
 
 .highlight-wrapper pre {
@@ -55,20 +70,6 @@ code {
     color: rgba(255,128,255);
     padding: 2px;
     font-family: monospace;
-}
-
-
-.copy_script_bttn {
-    background-color: rgb(128,90,128);
-    float: right;
-    border: none;
-    font-family: "Patrick Hand", cursive;
-    font-size: 1em;
-    height: fit-content;
-}
-
-.copy_script_bttn:hover {
-    background-color: rgb(255,128,255);
 }
 
 :root {
