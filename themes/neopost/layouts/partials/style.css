@@ -38,7 +38,7 @@ a,li,p,h1,h2,h3,h4,h5,h6 {
 }
 
 .highlight-toolbar > .item {
-    padding-top: 0.5em;
+    padding: 0.5em;
 }
 
 .copy_script_bttn {
