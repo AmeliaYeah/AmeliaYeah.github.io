@@ -50,6 +50,8 @@ typedef struct {
 } PyListObject;
 ```
 
+This essentially allows for any object in python to be cast as a `PyObject` and still be valid with a valid header.
+
 Some examples of Python types and their specific structs:
 * Dictionaries have [PyDictObject](https://github.com/python/cpython/blob/b4e48a444ea02921ce4b701fe165e6cfd4cf5845/Include/cpython/dictobject.h#L10)
 * Tuples have [PyTupleObject](https://github.com/python/cpython/blob/b4e48a444ea02921ce4b701fe165e6cfd4cf5845/Include/cpython/tupleobject.h#L5)
@@ -116,7 +118,7 @@ After this is done, you can then go ahead and execute all the python scripts you
 
 ## FakeObjects
 
-The first, and the only challenge I actually solved of the 2, is going to demonstrate what a *fakeobject* is in JIT. Here is the vulnerable script:
+The first, and the only challenge I actually solved of the 2, is going to demonstrate what a *fakeobject* is in JIT. It is based off the `addrof` and `fakeobj` primitives used in real JS exploitation, with [this article](https://trustfoundry.net/2025/03/28/browser-exploitation-basics-explaining-the-addrof-and-fakeobj-primitives/) for more details on that. Here is the vulnerable script:
 
 ```python3 {script_name="fakeobj.py"}
 #!/usr/bin/env python3
