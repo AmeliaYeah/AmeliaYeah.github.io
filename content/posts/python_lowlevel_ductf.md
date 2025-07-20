@@ -88,6 +88,8 @@ However, when running `str(my_dict)`, even without knowledge of CPython and pyth
 
 The reason this works is because, again, the type object and the functions it points to are what actually handle everything. The function pointer pointed to in the `tp_str` field for a String type is going to be different compared to that of a Dictionary type, but will ultimately result in the object being turned into a string.
 
+(Now, this may be a bad example, as strings and dicts both use `object_string` as the `tp_str` function, but things like `repr()` do in fact use different function in their type objects and this was mainly to convey a point.)
+
 This same principle applies to alot of other core aspects about a type, which if you are interested, you can read about [in the official documentation](https://docs.python.org/3.10/c-api/typeobj.html).
 
 ## Sooo...how do we break it?
