@@ -89,7 +89,7 @@ print(hello)
 You may assume that `str` is simply a standalone function that executes with `my_str` and `my_dict` respectively as parameters. This isn't entirely true; like with [many other cases in PyTypeObjects](https://docs.python.org/3.10/c-api/typeobj.html), what it actually does is instead rely on the functions present in the `PyTypeObject`. In this case, the `str` function will actually just do the following:
 1. Go to the `PyObject` specified as the parameter
 1. Locate their `PyTypeObject` from the `PyObject` header
-1. Locate the `tp_str` function, and then execute the address being pointed to in the `PyTypeObject` struct
+1. Locate the `tp_str` field within said `PyTypeObject` struct, and then execute the address being pointed to by said field
 1. Use the returned value as output of the higher-level `str` function
 
 This very concept applies not only to the `str` function, but multiple other builtin functions and type-specific methods. Once again, it really is just a vtable.
