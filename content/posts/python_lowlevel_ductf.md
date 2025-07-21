@@ -10,11 +10,11 @@ toc-auto-numbering: true
 
 Today, or well, yesterday, I participated in the *Down Under CTF* event. As someone particularly interested in pwn, I decided to take a crack at the category first as usual on my team.
 
-Two challenges, however, really piqued my interest. They involved what I will now be discussing in this post: **binary exploitation against Python3 itself**. Yes, you heard that right.
+Two challenges, however, really piqued my interest. They involved what I will now be discussing (the basics of) in this post: **binary exploitation against Python3 itself**. Yes, you heard that right.
 
 ## How does Python work..really?
 
-As you may or may not know, interpreted languages like Javascript, Ruby, Python, whatever, are fundementally just a low-level binary reading off your text and executing it. It will make it easier on itself by using things like bytecode, but that's basically the heart of what it's doing.
+As you may or may not know, interpreted languages like Javascript, Ruby, Python, whatever, are fundementally just a low-level binary reading off your text and executing it. It will make it easier on itself by using things like bytecode, but that's basically the heart of what it's doing. This does mean that, because of this, alot of interpreted languages *can be vulnerable* to low-level exploitation, even if they are thought of as normally a very abstracted language.
 
 In Python particularly, the actual root, [CPython](https://github.com/python/cpython/tree/v3.10.12/Python), is a C codebase that executes all python3 scripts.
 
@@ -72,7 +72,9 @@ typedef struct _object {
 
 The `ob_refcnt` number essentially determines, as per the [documentation](https://docs.python.org/3.10/c-api/typeobj.html#c.PyObject.ob_refcnt), the number of references a `PyObject` has to it for garbage-collection purposes.
 
-The other type, `ob_type`, is more important here. It points to a [PyTypeObject](https://github.com/python/cpython/blob/b4e48a444ea02921ce4b701fe165e6cfd4cf5845/Doc/includes/typestruct.h#L1), which if you are familiar with LibC filestream vtables, basically work the same way. They are the foundation behind the *Object Oriented* design of Python, in a sense.
+The other type, `ob_type`, is more important here. It points to a [PyTypeObject](https://github.com/python/cpython/blob/b4e48a444ea02921ce4b701fe165e6cfd4cf5845/Doc/includes/typestruct.h#L1), which if you are familiar with LibC filestream vtables, basically work the same way.
+
+`PyTypeObjects` essentially describe the fundemental properties of a `PyObject` as a class. This includes stuff not specific to the instance *itself*, but rather what it belongs to. For example, a dictionary object's `PyTypeObject` describes the class name ("dict"), what methods we can call on it, exetra. They are the foundation behind the *Object Oriented* design of Python, in a sense, allowing vastly different types to all be treated in a standard format and also with different object types having a more modular property.
 
 For instance, say you executed this:
 
@@ -84,9 +86,13 @@ hello = str(my_str) + str(my_dict)
 print(hello)
 ```
 
-One might assume that the `str` function is just a single function handling each variable, whether it be `my_str` or `my_dict`. This isn't entirely true; what actually happens is functions like `str`, `repr`, etc. actually look for the specific field within the object's `PyTypeObject` (so, for instance, `str` looks for `tp_str`, `repr` looks for `tp_repr`, etc.), and then executes the function pointed to there.
+You may assume that `str` is simply a standalone function that executes with `my_str` and `my_dict` respectively as parameters. This isn't entirely true; like with [many other cases in PyTypeObjects](https://docs.python.org/3.10/c-api/typeobj.html), what it actually does is instead rely on the functions present in the `PyTypeObject`. In this case, the `str` function will actually just do the following:
+1. Go to the `PyObject` specified as the parameter
+1. Locate their `PyTypeObject` from the `PyObject` header
+1. Locate the `tp_str` function, and then execute the address being pointed to in the `PyTypeObject` struct
+1. Use the returned value as output of the higher-level `str` function
 
-This same principle applies to alot of other core aspects about a type, which if you are interested, you can read about [in the official documentation](https://docs.python.org/3.10/c-api/typeobj.html).
+This very concept applies not only to the `str` function, but multiple other builtin functions and type-specific methods. Once again, it really is just a vtable.
 
 ## Sooo...how do we break it?
 
@@ -146,6 +152,7 @@ It's obvious how this is vulnerable. Writing to an object in python is different
 Executing `print` in Python really just executes [builtin_print](https://github.com/python/cpython/blob/b4e48a444ea02921ce4b701fe165e6cfd4cf5845/Python/bltinmodule.c#L1948) in CPython. The actual printing mechanic is shown here:
 
 ```c
+...
 for (i = 0; i < nargs; i++) {
 	//this handles seperators, not actual objects to print
 	if (i > 0) {
@@ -163,6 +170,7 @@ for (i = 0; i < nargs; i++) {
 	if (err)
 		return NULL;
 }
+...
 ```
 
 As you can see here, for each argument in the `print` function, it executes [PyFile_WriteObject](https://github.com/python/cpython/blob/b4e48a444ea02921ce4b701fe165e6cfd4cf5845/Objects/fileobject.c#L119) on it with the `Py_PRINT_RAW` flag.
@@ -170,21 +178,25 @@ As you can see here, for each argument in the `print` function, it executes [PyF
 This is important, because now look what happens in the `PyFile_WriteObject` function:
 
 ```c
+...
 if (flags & Py_PRINT_RAW) {
 	value = PyObject_Str(v);
 }
 else
 	value = PyObject_Repr(v);
+...
 ```
 
 You may have already guessed it, but [PyObject_Str](https://github.com/python/cpython/blob/b4e48a444ea02921ce4b701fe165e6cfd4cf5845/Objects/object.c#L462) utilizes what we discussed earlier. This time, however, there's one of two ways to go about it. If `tp_str` is NULL, then it will go to the `tp_repr` as a fallback. If it isn't NULL, it will use that instead.
 
 ```c
+...
 if (Py_TYPE(v)->tp_str == NULL)
     return PyObject_Repr(v); //we can use tp_repr if tp_str is NULL
 ...
 ...
 res = (*Py_TYPE(v)->tp_str)(v); //or we can just use tp_str if it isn't NULL
+...
 ```
 
 The [PyObject_Repr](https://github.com/python/cpython/blob/b4e48a444ea02921ce4b701fe165e6cfd4cf5845/Objects/object.c#L409) function is basically the same to the `PyObject_Str` function, just using `tp_repr` instead of `tp_str`
