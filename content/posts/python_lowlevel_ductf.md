@@ -84,13 +84,7 @@ hello = str(my_str) + str(my_dict)
 print(hello)
 ```
 
-For execution of `str(my_str)` it's pretty obvious how that would work. Maybe it just returns the string itself since it's already a string, maybe it allocates a new one and copies the string to the new string, who knows.
-
-However, when running `str(my_dict)`, even without knowledge of CPython and python internals, it's pretty obvious that it's not doing the same thing *at all* compared to a simple character array.
-
-The reason this works is because, again, the type object and the functions it points to are what actually handle everything. The function pointer pointed to in the `tp_str` field for a String type is going to be different compared to that of a Dictionary type, but will ultimately result in the object being turned into a string.
-
-(Now, this may be a bad example, as strings and dicts both use `object_string` as the `tp_str` function, but things like `repr()` do in fact use different function in their type objects and this was mainly to convey a point.)
+One might assume that the `str` function is just a single function handling each variable, whether it be `my_str` or `my_dict`. This isn't entirely true; what actually happens is functions like `str`, `repr`, etc. actually look for the specific field within the object's `PyTypeObject` (so, for instance, `str` looks for `tp_str`, `repr` looks for `tp_repr`, etc.), and then executes the function pointed to there.
 
 This same principle applies to alot of other core aspects about a type, which if you are interested, you can read about [in the official documentation](https://docs.python.org/3.10/c-api/typeobj.html).
 
