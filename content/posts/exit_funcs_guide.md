@@ -1,5 +1,6 @@
 ---
 title: "Exit Functions in LibC"
+description: "A demonstration on how to utilize memory locations and a LibC leak in order to obtain code execution"
 date: "2025-04-07T13:53:34-04:00"
 tags: ["binex", "concepts"]
 author: "AmeliaYeah"

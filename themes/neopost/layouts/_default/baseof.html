@@ -4,11 +4,9 @@
     <title>{{ if not .IsHome }}{{ .Title }} | {{ end }}{{ .Site.Title }}</title>
     <link rel="canonical" href="{{ .Site.BaseURL }}">
     
-    {{ with .Site.Params.favicon }}
-    <link rel="icon" href="{{ . }}">
-    {{ end }}
+    <link rel="icon" href="/favicon.ico">
     
-    <meta name="description" content="{{ with .Params.description }}{{ . }}{{ else }}{{ .Summary }}{{ end }}">
+    <meta name="description" content="{{ with .Params.Description }}{{ . }}{{ else }}{{ .Summary }}{{ end }}">
     
     {{ if isset .Params "tags" }}
     <meta name="keywords" content="{{ with .Params.tags }}{{ delimit . ", " }}{{ end }}">

@@ -14,7 +14,7 @@
     <aside id="sidebar">
         <div id="avatar">
             {{ with .Site.GetPage "section" "/sidebar/_index.md" }}
-            <img class="flower" src="{{ index .Params "icon-path" }}">
+            <img class="main-icon" src="{{ index .Params "icon-path" }}">
             {{ end }}
         </div>
         
@@ -54,13 +54,13 @@
         </div>
         
         <nav class="links">
-            <ul>
-            {{ with .Site.GetPage "section" "/sidebar/_index.md" }}
-            {{ range .Params.links }}
-                <li><a href="{{ .link }}">{{ .name }}</a></li>
-            {{ end }}
-            {{ end }}
-            </ul>
+            <div>
+                {{ with .Site.GetPage "section" "/sidebar/_index.md" }}
+                {{ range .Params.links }}
+                    <a href="{{ .link }}" target="_blank"><img width=40 src="{{ printf "/%s" .icon }}">{{ .name }}</a>
+                {{ end }}
+                {{ end }}
+            </div>
         </nav>
     </aside>
     <main>
@@ -99,7 +99,6 @@
     {{ range $index, $page := (.Paginate $pages (or (index .Site.Params "posts-per-page") 5)).Pages }}
         <article>
             {{- if (index .Params "table-of-contents") }}
-            <button id="post-toc-btn-{{ $index }}" class="dropbox-btn" onclick="toggleDropbox('post-toc-{{ $index }}')" >☰</button>
             <div id="post-toc-{{ $index }}" class="dropbox-content table-of-contents float">
                 {{ partial "toc.html" $page }}
             </div>
@@ -110,23 +109,13 @@
             {{ range $index, $tag := .Params.tags }}
             <a href="{{ relLangURL (printf "/tags/%s" $tag) }}">{{ $tag }}</a>{{ if ne $index (sub ($tags | len) 1) }},{{ end }}
             {{ end }}
+
             <div class="post-header">
                 @{{ $page.Params.author }} <span class="timestamp">{{ $page.Date.Format "January 2, 2006" }}</span>
             </div>
-            {{ with index $page.Params "title-images" }}
-            <div class="photosetx2">
-                {{ range first 2 . }}
-                <a href="{{ . }}" target="_blank"><img src="{{ . }}"></a>
-                {{ end }}
+            <div class="description">
+                <p>{{ default ($page.Title) $page.Description }}</p>
             </div>
-            {{ end }}
-            {{ with index $page.Params "ending-images" }}
-            <div class="photosetx3">
-                {{ range first 3 . }}
-                <a href="{{ . }}" target="_blank"><img src="{{ . }}"></a>
-                {{ end }}
-            </div>
-            {{ end }}
         </article>
     {{ end }}
     {{ template "_internal/pagination.html" . }}

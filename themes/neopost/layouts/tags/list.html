@@ -5,7 +5,7 @@
         {{ range .Pages }}
         <li class="tag-item">
             <a href="{{ .RelPermalink }}">{{ .Title }}</a>
-            <p> > {{ .Plain | safeHTML | truncate 250 }}</p>
+            <p> > {{ default (.Plain | safeHTML | truncate 250) .Description }}</p>
         </li>
         {{ end }}
     </ul>

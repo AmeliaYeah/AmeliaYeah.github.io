@@ -135,7 +135,21 @@ code {
     color: var(--border-color);
 }
 
+@keyframes background_animate {
+    0% {
+        background-position: 0 0;
+    }
+    50% {
+        background-position: 690px 690px;
+    }
+    100% {
+        background-position: 0 0;
+    }
+}
+
 body {
+    animation: background_animate 100s linear infinite;
+
     background-color: var(--bg-color);
     background-image: var(--site-bg);
     margin: 0;
@@ -239,35 +253,36 @@ li {
 
 nav {margin: 1em;}
 
-nav.links > ul {
+nav.links > div {
     max-width: 960px;
     margin: auto;
     line-height: 3rem;
     list-style-type: none;
     padding-left: 0;
-    justify-content: space-evenly;
+    display: flex;                  /* Ensure flex layout */
+    justify-content: center;       /* Center the items horizontally */
+    align-items: center;           /* Align items vertically (optional) */
+    gap: 0.5rem;                     /* Optional: spacing between images */
+}
+
+nav.links > div img {
+    display: block;
+    margin: 0 auto;
+}
+
+nav.links > div a {
+    padding: 5px;
+    margin: 0;
+    line-height: 1em;
+}
+
+nav.links > div a:hover img {
+    opacity: 0.5;
+    transform: rotate(15deg);
 }
 
 li {
     font-size: 16px;
-}
-
-nav.links li {
-    text-align: center;
-    list-style-image: none;
-    list-style-type: none;
-}
-
-nav.links li > a {
-    font-weight: bold;
-    background-color: var(--bg-color);
-    border: 4px double var(--outline-color);
-    padding: .5em 3em;
-}
-
-nav.links li > a:hover {
-    color: var(--accent-color);
-    background-color: var(--select-color);
 }
 
 nav.languages {
@@ -297,6 +312,11 @@ a:hover {
 }
 
 #sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1em;
+
     background-color: var(--bg-color2);
     color: var(--special-text-color);
     height: fit-content;
@@ -307,8 +327,9 @@ a:hover {
 }
 
 .small-box {
+    width: 100%;
+    align-self: center;
     max-width: 240px;
-    margin: auto;
     border: 2px solid var(--bg-color);
     line-height: 1.5rem;
 }
@@ -319,21 +340,16 @@ a:hover {
 }
 
 /*flower shape generated from here: https://css-generators.com/flower-shapes/ */
-.flower {
-    width: 300px; 
+.main-icon {
+    width: 300px; /* adjust to control the size */
     aspect-ratio: 1;
-    {{ with .Site.GetPage "section" "/sidebar/_index.md" }}
-    {{ if index .Params "icon-use-flower-shape" }}
-        --g:/37.02% 37.02% radial-gradient(#000 calc(71% - 1px),#0000 71%) no-repeat;
-        mask: 90.078% 79.895% var(--g),33.953% 97.355% var(--g),0.004% 49.372% var(--g),35.148% 2.257% var(--g),90.817% 21.121% var(--g),radial-gradient(100% 100%,#000 25.476%,#0000 calc(25.476% + 1px));
-    {{ else }}
-        border-radius: 50%;
-    {{ end }}
-    {{ end }}
+    clip-path: polygon(100% 50%,90.45% 79.39%,65.45% 97.55%,34.55% 97.55%,9.55% 79.39%,0% 50%,9.55% 20.61%,34.55% 2.45%,65.45% 2.45%,90.45% 20.61%);
 }
 
 #bio {
     margin: 20px;
+    margin-top: 0;
+    margin-bottom: 0;
     padding: .2em;
     background: var(--bg-color);
     border: 4px double var(--bg-color2);
@@ -529,7 +545,7 @@ header h1 a:hover {
 }
 
 #single-post > article {
-    width: 100%;
+    width: calc(100% - 20rem);
     margin-bottom: 0;
 }
 
@@ -557,7 +573,7 @@ header h1 a:hover {
         width: fit-content;
         padding: .3em 1em;
     }
-    nav.links > ul {
+    nav.links > div {
     /* this stuff makes it wrap around on mobile */
         display: flex;
         flex-wrap: wrap;
@@ -575,12 +591,16 @@ header h1 a:hover {
         margin: .3em 1em;
     }
 
+    #single-post > article > #post-toc-mobile {
+        display: inline;
+    }
+
     #single-post > .table-of-contents.sidebar {
         display: none;
     }
 
-    #single-post > article > #post-toc-mobile {
-        display: inline;
+    #single-post > article {
+        width: 100%;
     }
 }
 

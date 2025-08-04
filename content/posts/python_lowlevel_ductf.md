@@ -1,7 +1,8 @@
 ---
-title: 'An Introduction to Python Pwn: DUCTF 2025'
+title: 'DUCTF 2025: "FakeObject"'
+description: 'An introduction to low-level struct corruption on Python3'
 date: '2025-07-20T10:40:16-04:00'
-tags: ["binex", "concepts"]
+tags: ["binex", "writeups"]
 author: "AmeliaYeah"
 draft: false
 table-of-contents: true
