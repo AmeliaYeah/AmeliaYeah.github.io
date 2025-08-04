@@ -248,7 +248,7 @@ In particular, at `buf+32`, a pointer to [ptm_unix98_ops](https://elixir.bootlin
 The start of the kernel is at `startup_64`.
 
 ```bash
-~ # cat /proc/kallsyms | grep -i startup_64
+~# cat /proc/kallsyms | grep -i startup_64
 ffffffff90e00000 T startup_64
 ```
 
