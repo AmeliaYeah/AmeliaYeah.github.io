@@ -70,6 +70,10 @@ div.highlight code {
     color: white;
 }
 
+div.highlight > pre {
+    min-width: fit-content;
+}
+
 li code {
     font-size: 0.8em;
 }
@@ -605,3 +609,4 @@ header h1 a:hover {
 }
 
 </style>
+
