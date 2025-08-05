@@ -23,43 +23,53 @@ a,li,p,h1,h2,h3,h4,h5,h6 {
     margin-top: 10px;
     margin-bottom: 10px;
 
-    background-color: rgba(0,0,0,0.2);
+    filter: drop-shadow(black 0px 0px 5px);
 }
 
 .highlight-toolbar {
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0,0,0,0.4);
     border-style: solid;
     border-color: black;
+    border-radius: 10px;
     margin-bottom: 5px;
     padding: 3px;
 
     display: flex;
     justify-content: space-between;
+    flex-wrap: wrap;
 }
 
 .highlight-toolbar > .item {
+    text-align: left;
     padding: 0.5em;
+    font-size: 90%;
 }
 
-.copy_script_bttn {
-    background-color: rgb(128,90,128);
+.toolbar-bttn {
+    background-color: rgba(255,255,255, 0.2);
+    border-radius: 10px;
     border: none;
     font-family: "Winky Rough";
     font-size: 1em;
-    padding: 0.3em 0.6em;
+    width: fit-content;
+    height: 100%;
 }
 
-.copy_script_bttn:hover {
-    background-color: rgb(255,128,255);
+.toolbar-bttn:hover {
+    background-color: rgba(255,255,255);
 }
 
 .highlight-wrapper pre {
     margin: 0;
+    min-width: fit-content;
+    padding: 5px;
 }
 
 div.highlight {
-    border-style: solid;
-    border-color: black;
+    border-style: double;
+    border-radius: 5px;
+    border-width: 4px;
+    border-color: rgba(0,0,0);
     overflow-x: auto;
     overflow-y: hidden;
 }
@@ -69,10 +79,6 @@ div.highlight code {
     padding-left: 0px;
     padding-right: 0px;
     color: white;
-}
-
-div.highlight > pre {
-    min-width: fit-content;
 }
 
 li code {
@@ -85,6 +91,7 @@ code {
     padding: 2px;
     font-family: monospace;
     font-size: 1em;
+    overflow-wrap: break-word;
 }
 
 :root {

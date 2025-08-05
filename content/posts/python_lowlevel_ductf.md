@@ -153,7 +153,6 @@ It's obvious how this is vulnerable. Writing to an object in python is different
 Executing `print` in Python really just executes [builtin_print](https://github.com/python/cpython/blob/b4e48a444ea02921ce4b701fe165e6cfd4cf5845/Python/bltinmodule.c#L1948) in CPython. The actual printing mechanic is shown here:
 
 ```c
-...
 for (i = 0; i < nargs; i++) {
 	//this handles seperators, not actual objects to print
 	if (i > 0) {
@@ -171,7 +170,6 @@ for (i = 0; i < nargs; i++) {
 	if (err)
 		return NULL;
 }
-...
 ```
 
 As you can see here, for each argument in the `print` function, it executes [PyFile_WriteObject](https://github.com/python/cpython/blob/b4e48a444ea02921ce4b701fe165e6cfd4cf5845/Objects/fileobject.c#L119) on it with the `Py_PRINT_RAW` flag.
@@ -179,33 +177,28 @@ As you can see here, for each argument in the `print` function, it executes [PyF
 This is important, because now look what happens in the `PyFile_WriteObject` function:
 
 ```c
-...
 if (flags & Py_PRINT_RAW) {
 	value = PyObject_Str(v);
 }
 else
 	value = PyObject_Repr(v);
-...
 ```
 
 You may have already guessed it, but [PyObject_Str](https://github.com/python/cpython/blob/b4e48a444ea02921ce4b701fe165e6cfd4cf5845/Objects/object.c#L462) utilizes what we discussed earlier. This time, however, there's one of two ways to go about it. If `tp_str` is NULL, then it will go to the `tp_repr` as a fallback. If it isn't NULL, it will use that instead.
 
 ```c
-...
 if (Py_TYPE(v)->tp_str == NULL)
     return PyObject_Repr(v); //we can use tp_repr if tp_str is NULL
+
 ...
-...
+
 res = (*Py_TYPE(v)->tp_str)(v); //or we can just use tp_str if it isn't NULL
-...
 ```
 
 The [PyObject_Repr](https://github.com/python/cpython/blob/b4e48a444ea02921ce4b701fe165e6cfd4cf5845/Objects/object.c#L409) function is basically the same to the `PyObject_Str` function, just using `tp_repr` instead of `tp_str`
 
 ```c
-...
 res = (*Py_TYPE(v)->tp_repr)(v); //same thing
-...
 ```
 
 In either case, clever modification of either can lead to code execution.
@@ -236,9 +229,7 @@ typedef struct {
 However, in regards to having `system` call specifically with the "/bin/sh" parameter, it is important to note that, as shown before, the print function executes `tp_repr` with the parameter being our `PyObject`.
 
 ```c
-...
 res = (*Py_TYPE(v)->tp_repr)(v); //goal is to have this be system("/bin/sh") instead
-...
 ```
 
 What this means is that:
@@ -251,7 +242,7 @@ We'll first need to get the offset from the object type and the `tp_repr` field:
 
 ```as
 pwndbg> p PyDict_Type
-$2 = {   
+$2 = {
 	...
 	tp_repr = 0x5555555e11c6 <dict_repr>, //the repr function
 	...

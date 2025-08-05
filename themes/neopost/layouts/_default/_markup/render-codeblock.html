@@ -1,16 +1,21 @@
 {{- $lang  := .Attributes.lang | default .Type -}}
 {{- $opts := "lineNos=false" -}}
 
-<div class="highlight-wrapper">
+<div class="highlight-wrapper"
+{{ if (not (isset .Attributes "script_name")) }} style="max-width: fit-content;"{{ end }}
+>
   {{if isset .Attributes "script_name"}}
       {{- $opts = .Options -}}
 
     <div class="highlight-toolbar">
       <span class="item">
-          Shown: <span class="bold">{{ .Attributes.script_name }}</span> ({{ $lang }})
+          <span class="bold">{{ .Attributes.script_name }}</span>
       </span>
 
-      <button class="copy_script_bttn" onclick="copy_script(this)">Copy</button>
+      <div>
+        <button class="toolbar-bttn" onclick="copy_script(this)"><img src="/icons/copy.png"></button>
+        <button class="toolbar-bttn" onclick="download_script(this, '{{ .Attributes.script_name }}')"><img src="/icons/download.png"></button>
+      </div>
     </div>
   {{end}}
 
