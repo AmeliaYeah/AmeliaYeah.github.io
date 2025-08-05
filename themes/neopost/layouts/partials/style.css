@@ -61,6 +61,7 @@ div.highlight {
     border-style: solid;
     border-color: black;
     overflow-x: auto;
+    overflow-y: hidden;
 }
 
 div.highlight code {
@@ -609,4 +610,5 @@ header h1 a:hover {
 }
 
 </style>
+
 
