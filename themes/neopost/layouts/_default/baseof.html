@@ -15,7 +15,7 @@
     <meta property="og:description" content="{{ with .Params.Description }}{{ . }}{{ else }}{{ .Summary }}{{ end }}" />
 
     <!-- X (Twitter) -->
-    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:card" content="summary" />
     <meta property="twitter:url" content="{{ .Site.BaseURL }}" />
     <meta property="twitter:title" content="{{ if not .IsHome }}{{ .Title }} | {{ end }}{{ .Site.Title }}" />
     <meta property="twitter:description" content="{{ with .Params.Description }}{{ . }}{{ else }}{{ .Summary }}{{ end }}" />
