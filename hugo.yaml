@@ -8,6 +8,7 @@ enableRobotsTXT: true
 params:
     theme: "dark-pink"
     author: "AmeliaYeah"
+    description: "Just a simple security blog where I talk about shit."
     posts-per-page: 3
 
 permalinks:

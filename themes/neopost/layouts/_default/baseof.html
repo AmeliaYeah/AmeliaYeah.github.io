@@ -1,24 +1,29 @@
 <!DOCTYPE html>
 <html lang="{{ .Site.Language }}">
 <head>
+    {{ $title :=  (cond (.IsHome) .Site.Title .Title) }}
+    {{ $description := (cond (.IsHome) .Site.Params.Description .Description ) }}
+    {{ $author := (cond (.IsHome) .Site.Params.Author .Params.Author) }}
+
     <!-- Primary Meta Tags -->
-    <title>{{ if not .IsHome }}{{ .Title }} | {{ end }}{{ .Site.Title }}</title>
+    <title>{{ $title }}</title>
     <link rel="canonical" href="{{ .Site.BaseURL }}">
     <link rel="icon" href="/favicon.ico">
-    <meta name="description" content="{{ with .Params.Description }}{{ . }}{{ else }}{{ .Summary }}{{ end }}">
+    <meta name="description" content="{{ $description }}">
+    <meta name="author" content="{{ $author }}">
 
     <!-- Open Graph / Facebook -->
-    <meta property="og:title" content="{{ if not .IsHome }}{{ .Title }} | {{ end }}{{ .Site.Title }}" />
+    <meta property="og:title" content="{{ $title }}" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="{{ .Site.BaseURL }}" />
     <meta property="og:image" content="/icon.png" />
-    <meta property="og:description" content="{{ with .Params.Description }}{{ . }}{{ else }}{{ .Summary }}{{ end }}" />
+    <meta property="og:description" content="{{ $description }}" />
 
     <!-- X (Twitter) -->
     <meta property="twitter:card" content="summary" />
     <meta property="twitter:url" content="{{ .Site.BaseURL }}" />
-    <meta property="twitter:title" content="{{ if not .IsHome }}{{ .Title }} | {{ end }}{{ .Site.Title }}" />
-    <meta property="twitter:description" content="{{ with .Params.Description }}{{ . }}{{ else }}{{ .Summary }}{{ end }}" />
+    <meta property="twitter:title" content="{{ $title }}" />
+    <meta property="twitter:description" content="{{ $description }}" />
     <meta property="twitter:image" content="/icon.png" />
 
     <!-- Meta Tags Generated with https://metatags.io -->
