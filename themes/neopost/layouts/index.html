@@ -103,18 +103,18 @@
                 {{ partial "toc.html" $page }}
             </div>
             {{ end }}
-            <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+
+            <h1><a href="{{ .RelPermalink }}">{{ .Title }}</a></h1>
+
             {{ $tags := $page.Params.tags }}
-            tags:
             {{ range $index, $tag := .Params.tags }}
             <a href="{{ relLangURL (printf "/tags/%s" $tag) }}">{{ $tag }}</a>{{ if ne $index (sub ($tags | len) 1) }},{{ end }}
             {{ end }}
 
-            <div class="post-header">
-                @{{ $page.Params.author }} <span class="timestamp">{{ $page.Date.Format "January 2, 2006" }}</span>
-            </div>
             <div class="description">
-                <p>{{ default ($page.Title) $page.Description }}</p>
+                <p style="margin: 0">
+                    {{ default ($page.Title) $page.Description }}
+                </p>
             </div>
         </article>
     {{ end }}

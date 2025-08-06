@@ -7,15 +7,17 @@
     {{ end }}
 
     <article>
-        {{- if (index .Params "table-of-contents") }}
-        <div id="post-toc-mobile">
-            <button id="post-toc-btn" class="dropbox-btn" onclick="toggleDropbox('post-toc')" >☰</button>
-            <div id="post-toc" class="dropbox-content table-of-contents float">
-                {{ partial "toc.html" . }}
+        <div class="post-heading-information">
+            {{- if (index .Params "table-of-contents") }}
+            <div id="post-toc-mobile">
+                <button id="post-toc-btn" class="dropbox-btn" onclick="toggleDropbox('post-toc')" >☰</button>
+                <div id="post-toc" class="dropbox-content table-of-contents float">
+                    {{ partial "toc.html" . }}
+                </div>
             </div>
+            {{ end }}
         </div>
-        {{ end }}
-        <h2>{{ .Title }}</h2>
+        <h1 class="post-title">{{ .Title }}</h1>
         {{ $tags := .Params.tags }}
         tags:
         {{ range $index, $tag := .Params.tags }}
@@ -24,22 +26,7 @@
         <div class="post-header">
         @{{ .Params.author }} <span class="timestamp">{{ .Date.Format "January 2, 2006" }}</span>
         </div>
-        <p>{{ .Summary }}</p>
-        {{ with index .Params "title-images" }}
-        <div>
-        {{ range first 2 . }}
-        <a href="{{ . }}" target="_blank"><img style="max-height: 15rem; margin-right: .3rem;" src="{{ . }}"></a>
-        {{ end }}
-        </div>
-        {{ end }}
-        <div class="auto-numbering" id="full-content">{{ .ContentWithoutSummary | safeHTML }}</div>
-        {{ with index .Params "ending-images" }}
-        <div>
-        {{ range first 3 . }}
-        <a href="{{ . }}" target="_blank"><img style="max-height: 15rem; margin-right: .3rem;" src="{{ . }}"></a>
-        {{ end }}
-        </div>
-        {{ end }}
+        <div class="auto-numbering" id="full-content">{{ .Content | safeHTML }}
     </article>
     <script>
     window.addEventListener('click', e => {
@@ -57,7 +44,6 @@
 
     function toggleDropbox(id) {
         let dropbox = document.getElementById(id);
-
         dropbox.toggleAttribute("visible");
     }
     </script>

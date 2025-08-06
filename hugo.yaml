@@ -8,6 +8,7 @@ enableRobotsTXT: true
 params:
     theme: "dark-pink"
     author: "AmeliaYeah"
+    posts-per-page: 3
 
 permalinks:
     posts: "/posts/:year/:month/:day/:title"

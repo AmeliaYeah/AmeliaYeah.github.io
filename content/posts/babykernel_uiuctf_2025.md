@@ -480,20 +480,6 @@ void pretty_print(unsigned char* buf, size_t size) {
     printf("\n");
 }
 
-uint64_t u64(unsigned char* arr) {
-    uint64_t res = 0;
-    for (int i = 0; i < 8; i++) {
-        res |= (uint64_t)arr[i] << (i * 8);
-    }
-    return res;
-}
-
-void p64(uint64_t val, unsigned char out[8]) {
-    for (int i = 0; i < 8; i++) {
-        out[i] = (val >> (8 * i)) & 0xff;
-    }
-}
-
 int main() {
     //open the vulnerable driver
     fd = open("/dev/vuln", O_RDWR);
