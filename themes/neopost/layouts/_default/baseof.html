@@ -1,12 +1,27 @@
 <!DOCTYPE html>
 <html lang="{{ .Site.Language }}">
 <head>
+    <!-- Primary Meta Tags -->
     <title>{{ if not .IsHome }}{{ .Title }} | {{ end }}{{ .Site.Title }}</title>
     <link rel="canonical" href="{{ .Site.BaseURL }}">
-    
     <link rel="icon" href="/favicon.ico">
-    
     <meta name="description" content="{{ with .Params.Description }}{{ . }}{{ else }}{{ .Summary }}{{ end }}">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:title" content="{{ if not .IsHome }}{{ .Title }} | {{ end }}{{ .Site.Title }}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="{{ .Site.BaseURL }}" />
+    <meta property="og:image" content="/icon.png" />
+    <meta property="og:description" content="{{ with .Params.Description }}{{ . }}{{ else }}{{ .Summary }}{{ end }}" />
+
+    <!-- X (Twitter) -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="{{ .Site.BaseURL }}" />
+    <meta property="twitter:title" content="{{ if not .IsHome }}{{ .Title }} | {{ end }}{{ .Site.Title }}" />
+    <meta property="twitter:description" content="{{ with .Params.Description }}{{ . }}{{ else }}{{ .Summary }}{{ end }}" />
+    <meta property="twitter:image" content="/icon.png" />
+
+    <!-- Meta Tags Generated with https://metatags.io -->
     
     {{ if isset .Params "tags" }}
     <meta name="keywords" content="{{ with .Params.tags }}{{ delimit . ", " }}{{ end }}">
