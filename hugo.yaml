@@ -11,6 +11,32 @@ params:
     description: "Just a simple security blog where I talk about shit."
     posts-per-page: 3
 
+    iconpath: "/icon.png"
+    bio: "Hello! I'm Amelia and I like Cybersecurity :3"
+    basic-info:
+        - she/her
+        - cat lover
+        - born in 11 2003
+
+    credits:
+        - reason: "Site Engine"
+          name: "Hugo"
+          link: "https://gohugo.io/"
+        - reason: "Site Theme (modified)"
+          name: "Neopost"
+          link: "https://github.com/salatine/neopost"
+        - reason: "Search bar"
+          name: "Pagefind"
+          link: "https://pagefind.app/"
+
+    links:
+        - link: "https://github.com/AmeliaYeah"
+          icon: "github.png"
+          name: "Github"
+        - link: "https://ctftime.org/user/119915"
+          icon: "ctftime.png"
+          name: "CTFTime"
+
 permalinks:
     posts: "/posts/:year/:month/:day/:title"
 

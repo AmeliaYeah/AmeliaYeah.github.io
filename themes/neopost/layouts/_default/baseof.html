@@ -16,7 +16,7 @@
     <meta property="og:title" content="{{ $title }}" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="{{ .Site.BaseURL }}" />
-    <meta property="og:image" content="/icon.png" />
+    <meta property="og:image" content="{{ .Site.Params.iconpath }}" />
     <meta property="og:description" content="{{ $description }}" />
     <meta property="article:author" content="{{ $author }}" />
 
@@ -25,7 +25,7 @@
     <meta property="twitter:url" content="{{ .Site.BaseURL }}" />
     <meta property="twitter:title" content="{{ $title }}" />
     <meta property="twitter:description" content="{{ $description }}" />
-    <meta property="twitter:image" content="/icon.png" />
+    <meta property="twitter:image" content="{{ .Site.Params.iconpath }}" />
     <meta property="twitter:creator" content="{{ $author }}" />
 
     <!-- Meta Tags Generated with https://metatags.io -->

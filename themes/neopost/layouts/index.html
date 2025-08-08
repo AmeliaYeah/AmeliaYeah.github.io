@@ -13,21 +13,19 @@
     <div id="content">
     <aside id="sidebar">
         <div id="avatar">
-            {{ with .Site.GetPage "section" "/sidebar/_index.md" }}
-            <img class="main-icon" src="{{ index .Params "icon-path" }}">
-            {{ end }}
+            <img class="main-icon" src="{{ .Site.Params.iconpath }}">
         </div>
         
-        <div id="bio">
-        {{ with .Site.GetPage "section" "/sidebar/bio.md" }}
-            {{ .Content | safeHTML }}
-        {{ end }}
+        <div id="bio"> 
+            <p>{{ .Site.Params.bio }}</p>
         </div>
         
         <div class="small-box" id="about_me_list">
-            {{ with .Site.GetPage "section" "/sidebar/basic_info.md" }}
-                {{ .Content | safeHTML }}
-            {{ end }}
+            <ul>
+                {{ range (index .Site.Params "basic-info") }}
+                    <li>{{.}}</li>
+                {{ end }}
+            </ul>
 
             <script type="text/javascript">
                 //add the age
@@ -55,25 +53,22 @@
         
         <nav class="links">
             <div>
-                {{ with .Site.GetPage "section" "/sidebar/_index.md" }}
-                {{ range .Params.links }}
-                    <a href="{{ .link }}" target="_blank"><img width=40 src="{{ printf "/%s" .icon }}">{{ .name }}</a>
-                {{ end }}
+                {{ range .Site.Params.links }}
+                    <a href="{{ .link }}" target="_blank" rel="noopener"><img width=40 src="{{ printf "/%s" .icon }}">{{ .name }}</a>
                 {{ end }}
             </div>
         </nav>
     </aside>
     <main>
         <article id="top" class="clearfix">
-            {{ with .Site.GetPage "section" "/welcome-header/_index.md" }}
             <section>
             <div class="img-right">
                 <img src="{{ .Params.image }}">
             </div>
             <div>
-            <h1>{{ .Params.title }}</h1>
-            {{ range .Params.intro }}
-                <p>{{ . }}</p>
+            {{ with .Site.GetPage "section" "/header.md" }}
+            <h1>{{ .Title }}</h1>
+            <p>{{ .Content }}</p>
             {{ end }}
             </div>
             </section>
@@ -92,7 +87,6 @@
                 });
                 </script>
             </section>
-            {{ end }}
         </article>
     {{ $limit := index (index .Site.Params "read-more") "length-limit" }}
     {{ $pages := where .Site.RegularPages "Section" "posts" }}
@@ -122,13 +116,15 @@
 
     <article id="bottom" class="clearfix">
         <section>
-                <h5 style="margin: 0px;">Credit where credit's due..</h5>
-                <span style="font-size: 0.7rem;">
-                    {{ with .Site.GetPage "section" "/welcome-header/credit.md"}}
-                        {{.Content | safeHTML}}
-                    {{end}}
-                </span>
-            </section>
+            <h5 style="margin: 0px;">Credit where credit's due..</h5>
+            <ul>
+                {{ range .Site.Params.credits }}
+                <li>
+                    {{ .reason }}: <a target="_blank" rel="noopener" href="{{ .link }}">{{ .name }}</a>
+                </li>
+                {{ end }}
+            </ul>
+        </section>
     </article>
     <script>
     window.addEventListener('click', e => {
