@@ -36,6 +36,9 @@ params:
         - link: "https://ctftime.org/user/119915"
           icon: "ctftime.png"
           name: "CTFTime"
+        - link: "https://pwn.college/hacker/13335"
+          name: "pwn.college"
+          icon: "pwncollege.jpg"
 
 permalinks:
     posts: "/posts/:year/:month/:day/:title"
