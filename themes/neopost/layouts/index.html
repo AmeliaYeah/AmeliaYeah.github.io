@@ -54,7 +54,18 @@
         <nav class="links">
             <div>
                 {{ range .Site.Params.links }}
-                    <a href="{{ .link }}" target="_blank" rel="noopener"><img width=40 src="{{ printf "/%s" .icon }}">{{ .name }}</a>
+                    <a href="{{ .link }}" target="_blank" rel="noopener">
+
+                    {{ $img_path := printf "/icons/%s" .icon }}
+
+                    {{ with resources.Get $img_path }}
+                        {{ with .Resize "40x40" }}
+                        <img src="{{ .RelPermalink }}">
+                        {{ end }}
+                    {{ end }}
+
+                    {{ .name }}
+                    </a>
                 {{ end }}
             </div>
         </nav>
