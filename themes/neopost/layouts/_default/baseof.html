@@ -36,6 +36,9 @@
     
     {{ partial "style.css" . }}
 
+    <!-- RSS -->
+    <link rel="alternate" type="application/rss+xml" href="{{.Site.BaseURL }}index.xml" title="{{ .Site.Title }}">
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="index, follow">
     <meta charset="utf-8">
