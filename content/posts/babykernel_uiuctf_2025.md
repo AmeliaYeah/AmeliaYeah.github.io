@@ -2,7 +2,7 @@
 title: 'UIUCTF 2025: "Baby Kernel"'
 description: 'Utilizing a Use-After-Free and KJOP on the Kernel Heap to obtain root user privilege escalation'
 date: '2025-08-04T09:00:51-04:00'
-tags: ["binex", "writeups"]
+tags: ["binex", "writeups", "linux-kernel"]
 author: "AmeliaYeah"
 draft: false
 table-of-contents: true
