@@ -285,7 +285,8 @@ nav.links > div {
     display: flex;                  /* Ensure flex layout */
     justify-content: center;       /* Center the items horizontally */
     align-items: center;           /* Align items vertically (optional) */
-    gap: 0.5rem;                     /* Optional: spacing between images */
+    gap: 1rem;                     /* Optional: spacing between images */
+    flex-wrap: wrap;
 }
 
 nav.links > div img {
@@ -603,6 +604,10 @@ header h1 a:hover {
         flex-wrap: wrap;
         flex-direction: row;
     }
+    nav.links > div a {
+        font-size: 24px;
+    }
+
     #bio {width: 50%;}
     
     #sidebar ul {
