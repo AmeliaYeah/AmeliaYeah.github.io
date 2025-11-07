@@ -39,6 +39,9 @@ params:
         - link: "https://pwn.college/hacker/13335"
           name: "pwn.college"
           icon: "pwncollege.jpg"
+        - link: "https://app.hackthebox.com/profile/666835"
+          name: "HackTheBox"
+          icon: "hackthebox.png"
 
 permalinks:
     posts: "/posts/:year/:month/:day/:title"
