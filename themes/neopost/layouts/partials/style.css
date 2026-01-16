@@ -30,7 +30,7 @@ a,li,p,h1,h2,h3,h4,h5,h6 {
     background-color: rgba(0,0,0,0.4);
     border-style: solid;
     border-color: black;
-    border-radius: 10px;
+    border-radius: 5px;
     margin-bottom: 5px;
     padding: 3px;
 
@@ -47,17 +47,19 @@ a,li,p,h1,h2,h3,h4,h5,h6 {
 
 .toolbar-bttn {
     background-color: rgba(255,255,255, 0.2);
-    border-radius: 10px;
+    border-radius: 5px;
     border: none;
     font-family: "Winky Rough";
     font-size: 1em;
     width: fit-content;
     height: 100%;
     cursor: pointer;
+    transition: .2s ease-out;
 }
 
 .toolbar-bttn:hover {
-    background-color: rgba(255,255,255);
+    background-color: rgba(255,164,255);
+    transition: .2s ease;
 }
 
 .highlight-wrapper pre {
@@ -333,6 +335,7 @@ a:hover {
     color: var(--accent-color);
     border-color: var(--accent-color);
     transition: .2s ease;
+    font-weight: bold;
 }
 
 #sidebar {

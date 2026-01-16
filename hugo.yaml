@@ -28,6 +28,9 @@ params:
         - reason: "Search bar"
           name: "Pagefind"
           link: "https://pagefind.app/"
+        - reason: "Trans Flag Cursor"
+          name: "tholman"
+          link: "https://github.com/tholman/cursor-effects/"
 
     links:
         - link: "https://github.com/AmeliaYeah"

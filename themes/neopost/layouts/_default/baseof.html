@@ -52,7 +52,14 @@
     {{ if .Param "nextprev" }}{{ partial "nextprev.html" . }}{{ end }}
 </main>
 
-<script src="/code.js">
+<script src="/code.js"></script>
+<script src="https://unpkg.com/cursor-effects@latest/dist/browser.js"></script>
+<script>
+    new cursoreffects.rainbowCursor({
+      colors: ["#5BCEFA", "#F5A9B8", "#FFFFFF", "#F5A9B8", "#5BCEFA"],
+      size: 2
+    });
+</script>
 </script>
 </body>
 </html>
