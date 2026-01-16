@@ -42,6 +42,9 @@ params:
         - link: "https://app.hackthebox.com/profile/666835"
           name: "HackTheBox"
           icon: "hackthebox.png"
+        - link: "https://play.picoctf.org/users/am3la"
+          name: "PicoCTF"
+          icon: "picoctf.png"
 
 permalinks:
     posts: "/posts/:year/:month/:day/:title"
