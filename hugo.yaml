@@ -33,9 +33,9 @@ params:
           link: "https://github.com/tholman/cursor-effects/"
 
     links:
-        - link: "https://github.com/AmeliaYeah"
-          icon: "github.png"
-          name: "Github"
+        - link: "https://git.gay/mel"
+          icon: "gitgay.png"
+          name: "Git.Gay"
         - link: "https://ctftime.org/user/119915"
           icon: "ctftime.png"
           name: "CTFTime"
